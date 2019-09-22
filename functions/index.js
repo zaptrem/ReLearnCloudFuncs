@@ -13,8 +13,11 @@ exports.analyzeRecording = functions.firestore
        // did they reach the number for google transcription without an android phone?
 
        const recordingObject = snap.data();
-       uri = recordingObject.url;
+       let uri = recordingObject.uri;
+
+       let result = "yeet";
+
        return change.after.ref.set({
-        name_change_count: count + 1
+        transcription: result
       }, {merge: true});
 });
