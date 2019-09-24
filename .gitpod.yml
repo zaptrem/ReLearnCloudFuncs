@@ -1,5 +1,6 @@
 tasks:
 - init: npm install -g firebase-tools
+  command:  npm install eslint
 vscode:
   extensions:
     - esbenp.prettier-vscode@2.2.2:KF7uv+/v78QclIpOv6wh6g==
