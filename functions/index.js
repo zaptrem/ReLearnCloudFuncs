@@ -36,7 +36,7 @@ exports.analyzeRecording = functions
 
     let result = await transcribe(convertedURI);
 
-    return change.after.ref.set(
+    return snap.ref.set(
       {
         transcription: result
       },
@@ -82,6 +82,7 @@ async function transcribe(fileURI) {
       .map(result => result.alternatives[0].transcript)
       .join("\n");
     console.log(`Transcription: ${transcription}`);
+    return transcription;
   } catch (err) {
     console.log("something went wrong: " + err);
   }
