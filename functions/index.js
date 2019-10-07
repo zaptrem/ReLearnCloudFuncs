@@ -14,6 +14,7 @@ const cookieParser = require("cookie-parser")();
 const cors = require("cors")({ origin: true });
 const app = express();
 const fetch = require("node-fetch");
+const util = require('util')
 const runtimeOpts = {
   timeoutSeconds: 540,
   memory: "1GB"
@@ -278,9 +279,11 @@ async function check(req, res) {
     .collection("recordings")
     .doc(id);*/
 
-  //console.log(response);
+  let returning = await response.json();
 
-  res.send(response);
+  console.log(returning);
+
+  res.send(returning);
 }
 app.use(cors);
 app.use(cookieParser);
