@@ -30,35 +30,26 @@ exports.analyzeRecording = functions
   .region("us-east1")
   .runWith(runtimeOpts)
   .firestore.document("users/{userId}/recordings/{recordingId}")
-  .onWrite(async (change, context) => {
+  .onCreate(async (snap, context) => {
     // Match to group, add to group list. Does the group have a transcription?
     // did they reach the number for google transcription without an android phone?
 
-    const document = change.after.exists ? change.after.data() : null;
-    if(document == null) {
-        print("document not found, likely deleted");
-        return;
-    }
-    const recordingObject = document;
+    const recordingObject = snap.data();
+    if (recordingObject.status != "NeedTranscription") return;
     let uri = recordingObject.uri;
     let storageAddress = recordingObject.storageAddress;
     let bucket = recordingObject.bucket;
     let convertedURI_pre = await convert(recordingObject);
     let convertedURI = "gs://" + bucket + "/" + convertedURI_pre;
 
-    if (recordingObject.status != "NeedTranscription") return;
+    
 
-    let result = await transcribe(convertedURI, change.after);
+    let result = await transcribe(convertedURI, recordingObject);
 
 
 
-    // Old server writes transcription code
-    return change.after.ref.set(
-      {
-        transcription: result
-      },
-      { merge: true }
-    );
+    
+    return;
   });
 // Obv transcribes the audio..
 async function transcribe(fileURI, snap) {
@@ -80,7 +71,8 @@ async function transcribe(fileURI, snap) {
   const config = {
     encoding: "flac",
     sampleRateHertz: 44100,
-    languageCode: "en-US"
+    languageCode: "en-US",
+    model: "video"
   };
   const request = {
     audio: audio,
